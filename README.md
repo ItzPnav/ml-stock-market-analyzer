@@ -13,6 +13,13 @@
 
 ---
 
+## 🚀 Live Demo
+```bash
+https://ml-stock-market-analyzer.streamlit.app
+```
+
+---
+
 # 📌 **Overview**
 
 **ml-stock-market-forecaster** is a machine learning–based stock forecasting system built with **Python + Streamlit**. It simulates real-world forecasting conditions by hiding future stock data during model training, then revealing it afterward for cross-check validation.
