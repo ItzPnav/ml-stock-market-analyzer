@@ -9,9 +9,6 @@ venv/
 # Streamlit
 .streamlit/
 
-# Data cache (large CSVs — optional, see note below)
-data/predownloaded_live_cache/*.csv
-
 # OS
 .DS_Store
 Thumbs.db
