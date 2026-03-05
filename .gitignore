@@ -15,3 +15,4 @@ data/predownloaded_live_cache/*.csv
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini

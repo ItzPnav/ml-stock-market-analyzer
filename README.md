@@ -19,14 +19,14 @@
 
 It uses:
 
-* **Manual Linear Regression** — future price forecasting
-* **Manual Logistic Regression** — UP/DOWN trend direction prediction
-* **ARIMA** — time-series forecasting
-* **yfinance** — live stock data fetching
-* **Matplotlib** — forecast and cross-check visualization
-* **Streamlit** — interactive web UI
+* 📐 **Manual Linear Regression** — future price forecasting
+* 🔀 **Manual Logistic Regression** — UP/DOWN trend direction prediction
+* 📉 **ARIMA** — time-series forecasting
+* 📡 **yfinance** — live stock data fetching
+* 📊 **Matplotlib** — forecast and cross-check visualization
+* 🖥️ **Streamlit** — interactive web UI
 
-Built as an educational AI-assisted decision support tool for academic ML review.
+> Built as an educational AI-assisted decision support tool for academic ML review.
 
 ---
 
@@ -35,6 +35,7 @@ Built as an educational AI-assisted decision support tool for academic ML review
 👉 **[PROJECT_PROGRESS.md](PROJECT_PROGRESS.md)** — *Full feature history & implementation log*
 👉 [FILE_STRUCT.md](FILE_STRUCT.md) — *Directory tree*
 👉 [requirements.txt](requirements.txt) — *Dependencies*
+👉 [CREDITS.md](CREDITS.md) — *Libraries & acknowledgements*
 
 ---
 
@@ -55,9 +56,9 @@ Search Bar (Live Ticker) OR Preset Dropdown (Offline CSV)
                     ↓
            Model Selection (Sidebar)
      ┌──────────────────────────────┐
-     │  Linear Regression           │  → price forecast
-     │  Logistic Regression         │  → UP/DOWN direction
-     │  ARIMA                       │  → time-series forecast
+     │  📐 Linear Regression        │  → price forecast
+     │  🔀 Logistic Regression      │  → UP/DOWN direction
+     │  📉 ARIMA                    │  → time-series forecast
      └──────────────────────────────┘
                     ↓
           Forecast Generation
@@ -74,101 +75,101 @@ Search Bar (Live Ticker) OR Preset Dropdown (Offline CSV)
 # 🚀 **Features**
 
 ### 📡 Live yfinance Data Integration
-Search any company name or ticker symbol. Live data fetched for 2 years and cached locally. Suggestion dropdown with 65+ US and Indian NSE stocks.
+Search any company name or ticker symbol. Live data fetched for 2 years and cached locally. Suggestion dropdown with 65+ US and Indian NSE stocks. 🟢 Live / 🟡 Offline badge shown in sidebar.
 
 ### 📂 Offline Preset Stocks
-Pre-downloaded CSV data for AAPL, NVDA, GLD, RELIANCE.NS, TCS.NS, INFY.NS — runs fully offline.
+Pre-downloaded CSV data for AAPL, NVDA, GLD, RELIANCE.NS, TCS.NS, INFY.NS — runs fully offline, no internet needed.
 
 ### 🔒 Data Leakage Prevention
-70/30 train-test split — models never see future data during training. Hidden 30% revealed only after forecast is made.
+70/30 train-test split — models **never** see future data during training. Hidden 30% is revealed only after the forecast is made, simulating real-world conditions.
 
-### 📈 Linear Regression — Price Forecast
-Manual slope-intercept implementation. Recursive multi-day forecasting. Forecast chart (known + predicted) and cross-check overlay (predicted vs actual).
+### 📐 Linear Regression — Price Forecast
+Manual slope-intercept implementation with no sklearn. Recursive multi-day price forecasting. Forecast chart (known + predicted) and cross-check overlay (predicted vs actual in green).
 
-### 📉 Logistic Regression — Trend Direction
-Manual gradient descent with sigmoid activation. Predicts UP/DOWN per day. Cross-check table with Match column (✅/❌) and accuracy score.
+### 🔀 Logistic Regression — Trend Direction
+Manual gradient descent with sigmoid activation. Predicts **UP 📈 / DOWN 📉** per day. Cross-check table with Match column (✅ / ❌) and a final accuracy score.
 
-### 📊 ARIMA — Time-Series Forecasting
-AIC-based order selection. Separate forecasting section in the UI. *(In progress)*
+### 📉 ARIMA — Time-Series Forecasting
+AIC-based order selection for optimal (p, d, q) parameters. Forecasts future stock prices using historical time-series patterns with a dedicated visualization section in the UI.
 
 ### 🏆 Model Performance Dashboard & Leaderboard
-Compare model accuracy side by side. Ranked leaderboard of model performance. *(Pending)*
+Compare Linear Regression, Logistic Regression, and ARIMA side by side. Displays accuracy scores, prediction error metrics, and a ranked leaderboard to evaluate which model performs best on the selected stock.
 
 ### 🔍 Cross-check Validation
-After forecasting, reveal hidden real data. Compare predicted vs actual with overlay chart and comparison table.
+After forecasting, reveal the hidden real data. Compare predicted vs actual with an overlay chart and a detailed comparison table showing exact differences.
 
 ---
 
 # ⚙️ **Tech Stack**
 
-| Layer         | Technology                        |
-|---------------|-----------------------------------|
-| Frontend      | Streamlit                         |
-| ML Models     | Manual Linear & Logistic Regression, ARIMA (statsmodels) |
-| Data Handling | Pandas, NumPy                     |
-| Visualization | Matplotlib                        |
-| Live Data     | yfinance                          |
-| Language      | Python 3                          |
+| Layer           | Technology                                               |
+|-----------------|----------------------------------------------------------|
+| 🖥️ Frontend     | Streamlit                                                |
+| 🧠 ML Models    | Manual Linear & Logistic Regression, ARIMA (statsmodels) |
+| 🗃️ Data         | Pandas, NumPy                                            |
+| 📊 Charts       | Matplotlib                                               |
+| 📡 Live Data    | yfinance                                                 |
+| 🐍 Language     | Python 3                                                 |
 
 ---
 
 # 📦 **Setup (Short Version)**
 
-1. Clone the repo:
+1. **Clone the repo:**
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/ml-stock-market-forecaster.git
 cd ml-stock-market-forecaster
 ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Run the app:
+3. **Run the app:**
 
 ```bash
 streamlit run app.py
 ```
 
-> Offline mode works out of the box with pre-downloaded CSVs in `data/predownloaded_live_cache/`.
-> Live mode fetches data from Yahoo Finance automatically on ticker search.
+> 🟡 **Offline mode** works out of the box with pre-downloaded CSVs in `data/predownloaded_live_cache/`.
+> 🟢 **Live mode** fetches data from Yahoo Finance automatically on ticker search.
 
 ---
 
-# 🛡️ Production Tips
+# 🛡️ **Production Tips**
 
-* Pre-download CSVs for all required tickers before demo — avoids live fetch delays
-* Use `@st.cache_data` with TTL for live data to reduce repeated API calls
-* Run on a machine with stable internet for live yfinance fetching
-* Keep `data/predownloaded_live_cache/` committed for fully offline execution
-
----
-
-# 🤝 Contributing
-
-PRs and issues welcome!
+* 📥 Pre-download CSVs for all required tickers before demo — avoids live fetch delays
+* ⏱️ Use `@st.cache_data` with TTL for live data to reduce repeated API calls
+* 🌐 Run on a machine with stable internet for live yfinance fetching
+* 💾 Keep `data/predownloaded_live_cache/` committed for fully offline execution
 
 ---
 
-# 📜 License
+# 🤝 **Contributing**
 
-MIT License — use freely.
-
----
-
-# ❤️ Credits
-
-* Yahoo Finance & yfinance library for market data
-* Matplotlib for visualization
-* Streamlit for the interactive UI
-* NumPy & Pandas for data handling
-* statsmodels for ARIMA
+PRs and issues welcome! Feel free to fork and build on top of this.
 
 ---
 
-# 🚀 Made with passion by **Kattu**
+# 📜 **License**
 
-Stock forecasting done right.
+MIT License — use freely. See [LICENSE.md](LICENSE.md) for details.
+
+---
+
+# ❤️ **Credits**
+
+* 📈 Yahoo Finance & `yfinance` library for market data
+* 📊 Matplotlib for visualization
+* 🖥️ Streamlit for the interactive UI framework
+* 🔢 NumPy & Pandas for data handling
+* 📉 statsmodels for ARIMA time-series support
+
+---
+
+# 🚀 Made with passion by **Katakam Sri Pranav**
+
+> *Stock forecasting done right.*
