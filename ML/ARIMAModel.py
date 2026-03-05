@@ -22,9 +22,9 @@ def find_best_arima_order(series):
     best_aic   = np.inf
     best_order = (1, 1, 1)
 
-    for p in range(0, 4):
-        for d in range(0, 3):
-            for q in range(0, 4):
+    for p in range(0, 6):
+        for d in range(0, 4):
+            for q in range(0, 6):
                 try:
                     model = ARIMA(series, order=(p, d, q))
                     result = model.fit()
