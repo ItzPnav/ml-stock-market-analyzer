@@ -153,6 +153,7 @@ for key, default in [
     ("arima_predicted_output",   None),
     ("arima_best_order",         None),
     ("arima_last_selection",     None),
+    ("selected_model",           "Linear Regression (Price Forecast)"),
 ]:
     if key not in st.session_state:
         st.session_state[key] = default
@@ -277,6 +278,74 @@ if st.session_state.live_ticker:
 st.markdown("---")
 
 # ==================================================
+# MODEL CARD SELECTOR — 3 cards, main page
+# ==================================================
+st.markdown("#### 🧠 Select Forecasting Model")
+
+MODELS = [
+    {
+        "key":   "Linear Regression (Price Forecast)",
+        "icon":  "📈",
+        "title": "Linear Regression",
+        "desc":  "Predicts future closing prices using slope-intercept trend.",
+        "tag":   "Price Forecast",
+        "color": "#1f77b4",
+    },
+    {
+        "key":   "Logistic Regression (Trend Direction)",
+        "icon":  "🔀",
+        "title": "Logistic Regression",
+        "desc":  "Classifies each future day as UP or DOWN using gradient descent.",
+        "tag":   "Trend Direction",
+        "color": "#2ca02c",
+    },
+    {
+        "key":   "ARIMA (Time-Series Forecast)",
+        "icon":  "🔮",
+        "title": "ARIMA",
+        "desc":  "Time-series model using walk-forward forecasting with AIC order selection.",
+        "tag":   "Time-Series",
+        "color": "#9467bd",
+    },
+]
+
+card_cols = st.columns(3)
+for i, m in enumerate(MODELS):
+    with card_cols[i]:
+        is_selected  = st.session_state.selected_model == m["key"]
+        border_color = m["color"] if is_selected else "#444"
+        bg_color     = "#16213e" if is_selected else "#1a1a2e"
+        shadow       = f'0 0 14px {m["color"]}88' if is_selected else "none"
+        checkmark    = " ✅" if is_selected else ""
+
+        st.markdown(f"""
+        <div style="
+            padding: 16px 18px;
+            border-radius: 12px;
+            border: 2px solid {border_color};
+            background: {bg_color};
+            box-shadow: {shadow};
+            margin-bottom: 4px;
+        ">
+            <div style="font-size:28px">{m['icon']}</div>
+            <div style="font-size:16px; font-weight:700; color:#fff;">{m['title']}{checkmark}</div>
+            <div style="font-size:11px; font-weight:600; color:{m['color']}; text-transform:uppercase; margin:4px 0 8px;">{m['tag']}</div>
+            <div style="font-size:13px; color:#bbb; line-height:1.4;">{m['desc']}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("Select", key=f"model_btn_{i}", use_container_width=True):
+            print(f"[DEBUG] Model card selected: {m['key']}")
+            st.session_state.selected_model = m["key"]
+            reset_forecast_state()
+            st.rerun()
+
+model_choice = st.session_state.selected_model
+print(f"[DEBUG] Active model_choice: {model_choice}")
+
+st.markdown("---")
+
+# ==================================================
 # SIDEBAR — Preset + Model
 # ==================================================
 st.sidebar.header("Configuration")
@@ -289,15 +358,7 @@ selected_preset = st.sidebar.selectbox(
 
 st.sidebar.markdown("---")
 
-model_choice = st.sidebar.selectbox(
-    "Choose Model",
-    [
-        "Linear Regression (Price Forecast)",
-        "Logistic Regression (Trend Direction)"
-    ]
-)
-
-print(f"[DEBUG] Model: {model_choice} | Preset: {selected_preset}")
+print(f"[DEBUG] Model: {st.session_state.selected_model} | Preset: {selected_preset}")
 
 # ==================================================
 # Determine Active Stock
