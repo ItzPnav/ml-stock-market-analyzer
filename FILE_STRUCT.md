@@ -1,27 +1,32 @@
 # File Tree: stock predict
 
-**Generated:** 3/5/2026, 9:08:22 PM
+**Generated:** 3/6/2026, 11:58:47 PM
 **Root Path:** `c:\pnav\projects\stock predict`
 
 ```
 ├── 📁 ML
+│   ├── 🐍 ARIMAModel.py
 │   ├── 🐍 LinearRegressionModel.py
 │   └── 🐍 LogisticRegressionModel.py
 ├── 📁 data
-│   ├── 📁 predownloaded_live_cache
-│   │   ├── 📄 AAPL.csv
-│   │   ├── 📄 GLD.csv
-│   │   ├── 📄 INFY_NS.csv
-│   │   ├── 📄 NVDA.csv
-│   │   ├── 📄 RELIANCE_NS.csv
-│   │   └── 📄 TCS_NS.csv
-│   └── 🐍 clean_the_csv_files.py
+│   └── 📁 predownloaded_live_cache
+│       ├── 📄 AAPL.csv
+│       ├── 📄 GLD.csv
+│       ├── 📄 INFY_NS.csv
+│       ├── 📄 NVDA.csv
+│       ├── 📄 RELIANCE_NS.csv
+│       ├── 📄 TCS_NS.csv
+│       └── 📄 TSLA.csv
 ├── 📁 docs
 │   ├── 📕 Machine Learning Based Stock Market Forecasts!.pdf
 │   └── 📄 official review 1 IOMP stock market predictor (1).pptx
+├── ⚙️ .gitignore
+├── 📝 CREDITS.md
 ├── 📝 FILE_STRUCT.md
+├── 📝 LICENSE.md
 ├── 📝 OpenAI_Last_memory_reference.md
 ├── 📝 PROJECT_PROGRESS.md
+├── 📝 README.md
 ├── 🐍 app.py
 └── 📄 requirements.txt
 ```
