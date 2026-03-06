@@ -450,25 +450,26 @@ st.markdown("---")
 # ==================================================
 # Section 2 — Forecast Button
 # ==================================================
-if st.button("🤖 Run Forecast"):
-    print(f"[DEBUG] Forecast clicked | model: {model_choice} | k: {k}")
-    st.session_state.crosscheck_done = False
+if not model_choice.startswith("ARIMA"):
+    if st.button("🤖 Run Forecast"):
+        print(f"[DEBUG] Forecast clicked | model: {model_choice} | k: {k}")
+        st.session_state.crosscheck_done = False
 
-    if model_choice.startswith("Linear"):
-        future_prices = train_and_predict(visible_data, days=k)
-        print(f"[DEBUG] Linear (first 5): {future_prices[:5]}")
-        st.session_state.model_mode       = "price"
-        st.session_state.predicted_output = future_prices
-        st.session_state.forecast_done    = True
-        st.success(f"✅ Linear Regression forecast complete — {k} days predicted.")
+        if model_choice.startswith("Linear"):
+            future_prices = train_and_predict(visible_data, days=k)
+            print(f"[DEBUG] Linear (first 5): {future_prices[:5]}")
+            st.session_state.model_mode       = "price"
+            st.session_state.predicted_output = future_prices
+            st.session_state.forecast_done    = True
+            st.success(f"✅ Linear Regression forecast complete — {k} days predicted.")
 
-    elif model_choice.startswith("Logistic"):
-        directions = train_and_predict_direction(visible_data, days=k)
-        print(f"[DEBUG] Logistic (first 5): {directions[:5]}")
-        st.session_state.model_mode       = "trend"
-        st.session_state.predicted_output = directions
-        st.session_state.forecast_done    = True
-        st.success(f"✅ Logistic Regression prediction complete — {k} days predicted.")
+        elif model_choice.startswith("Logistic"):
+            directions = train_and_predict_direction(visible_data, days=k)
+            print(f"[DEBUG] Logistic (first 5): {directions[:5]}")
+            st.session_state.model_mode       = "trend"
+            st.session_state.predicted_output = directions
+            st.session_state.forecast_done    = True
+            st.success(f"✅ Logistic Regression prediction complete — {k} days predicted.")
 
 # ==================================================
 # Section 3 — Forecast Result (Persistent)
@@ -601,138 +602,126 @@ if st.session_state.crosscheck_done:
 # ==================================================
 # ARIMA SECTION — Separate Time-Series Forecast
 # ==================================================
-st.markdown("---")
-st.markdown("---")
-st.subheader("🔮 ARIMA Time-Series Forecast")
-st.caption("AutoRegressive Integrated Moving Average — trained on the same 70% visible data")
-
-# Reset ARIMA state if stock changes
-arima_selection = f"{active_label}__arima"
-if st.session_state.arima_last_selection != arima_selection:
-    print(f"[DEBUG] ARIMA stock changed → reset ARIMA state")
-    st.session_state.arima_forecast_done    = False
-    st.session_state.arima_crosscheck_done  = False
-    st.session_state.arima_predicted_output = None
-    st.session_state.arima_best_order       = None
-    st.session_state.arima_last_selection   = arima_selection
-
-# ==================================================
-# ARIMA — Run Forecast Button
-# ==================================================
-if st.button("📡 Run ARIMA Forecast"):
-    print(f"[DEBUG] ARIMA forecast clicked | k={k}")
-    st.session_state.arima_crosscheck_done = False
-
-    with st.spinner("Running ARIMA — finding best (p,d,q) order via AIC grid search..."):
-        try:
-            arima_prices = train_and_predict_arima(visible_data, days=k)
-            st.session_state.arima_predicted_output = arima_prices
-            st.session_state.arima_forecast_done    = True
-            print(f"[DEBUG] ARIMA forecast done | first 5: {arima_prices[:5]}")
-            st.success(f"✅ ARIMA forecast complete — {k} days predicted.")
-        except Exception as e:
-            print(f"[DEBUG] ARIMA ERROR: {e}")
-            st.error(f"❌ ARIMA failed: {e}")
-
-# ==================================================
-# ARIMA — Forecast Result (Smooth Line Chart)
-# ==================================================
-if st.session_state.arima_forecast_done:
-
-    arima_prices  = st.session_state.arima_predicted_output
-    future_labels = [f"Day +{i+1}" for i in range(k)]
-
-    st.subheader("📈 ARIMA Forecast Result (Predicted 30%)")
-
-    # Price table
-    arima_price_df = pd.DataFrame({
-        "Day":             future_labels,
-        "Predicted Price": [round(p, 4) for p in arima_prices]
-    })
-    with st.expander("📄 View ARIMA Forecast Table"):
-        st.dataframe(arima_price_df)
-
-    # Smooth line chart — no markers (like the reference image)
-    fig_a1, ax_a1 = plt.subplots(figsize=(12, 4))
-    x_known    = range(len(visible_data))
-    x_forecast = range(len(visible_data), len(visible_data) + k)
-
-    ax_a1.plot(x_known,    visible_data["Close"], label="Known Data (70%)", color="steelblue", linewidth=1.8)
-    ax_a1.plot(x_forecast, arima_prices,          label="ARIMA Predicted (30%)", color="orange", linestyle="--", linewidth=2)
-
-    all_x      = list(x_known) + list(x_forecast)
-    all_labels = list(visible_data["Date"]) + future_labels
-    step_a1 = max(1, len(all_x) // 12)
-    ax_a1.set_xticks(all_x[::step_a1])
-    ax_a1.set_xticklabels(all_labels[::step_a1], rotation=45, ha="right")
-    ax_a1.yaxis.set_major_locator(MaxNLocator(nbins=8))
-    ax_a1.set_title(f"{active_label} — ARIMA Forecast")
-    ax_a1.set_xlabel("Time")
-    ax_a1.set_ylabel("Price")
-    ax_a1.legend()
-    ax_a1.grid(True)
-    plt.tight_layout()
-    st.pyplot(fig_a1)
-
-    print(f"[DEBUG] ARIMA forecast chart rendered")
-
-    # Cross-check button
+if model_choice.startswith("ARIMA"):
     st.markdown("---")
-    if st.button("🔍 ARIMA Cross-check with Real Data"):
-        print(f"[DEBUG] ARIMA cross-check clicked")
-        st.session_state.arima_crosscheck_done = True
+    st.subheader("🔮 ARIMA Time-Series Forecast")
+    st.caption("AutoRegressive Integrated Moving Average — trained on the same 70% visible data")
 
-# ==================================================
-# ARIMA — Cross-check Result (Smooth 3-Line Overlay)
-# ==================================================
-if st.session_state.arima_crosscheck_done:
+    # Reset ARIMA state if stock changes
+    arima_selection = f"{active_label}__arima"
+    if st.session_state.arima_last_selection != arima_selection:
+        print(f"[DEBUG] ARIMA stock changed → reset ARIMA state")
+        st.session_state.arima_forecast_done    = False
+        st.session_state.arima_crosscheck_done  = False
+        st.session_state.arima_predicted_output = None
+        st.session_state.arima_best_order       = None
+        st.session_state.arima_last_selection   = arima_selection
 
-    arima_prices     = st.session_state.arima_predicted_output
-    real_prices      = hidden_real_data["Close"].values
-    real_dates       = hidden_real_data["Date"].values
+    # ARIMA — Run Forecast Button
+    if st.button("📡 Run ARIMA Forecast"):
+        print(f"[DEBUG] ARIMA forecast clicked | k={k}")
+        st.session_state.arima_crosscheck_done = False
 
-    print(f"[DEBUG] ARIMA CC predicted (first 5): {arima_prices[:5]}")
-    print(f"[DEBUG] ARIMA CC actual    (first 5): {list(real_prices[:5])}")
+        with st.spinner("Running ARIMA — finding best (p,d,q) order via AIC grid search..."):
+            try:
+                arima_prices = train_and_predict_arima(visible_data, days=k)
+                st.session_state.arima_predicted_output = arima_prices
+                st.session_state.arima_forecast_done    = True
+                print(f"[DEBUG] ARIMA forecast done | first 5: {arima_prices[:5]}")
+                st.success(f"✅ ARIMA forecast complete — {k} days predicted.")
+            except Exception as e:
+                print(f"[DEBUG] ARIMA ERROR: {e}")
+                st.error(f"❌ ARIMA failed: {e}")
 
-    st.subheader("📊 ARIMA Cross-check — Predicted vs Actual (30%)")
+    # ARIMA — Forecast Result (Smooth Line Chart)
+    if st.session_state.arima_forecast_done:
 
-    # Smooth 3-line overlay — Known / Predicted / Actual
-    fig_a2, ax_a2 = plt.subplots(figsize=(12, 4))
-    x_known = range(len(visible_data))
-    x_pred  = range(len(visible_data), len(visible_data) + k)
+        arima_prices  = st.session_state.arima_predicted_output
+        future_labels = [f"Day +{i+1}" for i in range(k)]
 
-    ax_a2.plot(x_known, visible_data["Close"], label="Known (70%)",       color="steelblue", linewidth=1.8)
-    ax_a2.plot(x_pred,  arima_prices,          label="ARIMA Predicted",   color="orange",    linestyle="--", linewidth=2)
-    ax_a2.plot(x_pred,  real_prices,           label="Actual (Real 30%)", color="green",     linewidth=2)
+        st.subheader("📈 ARIMA Forecast Result (Predicted 30%)")
 
-    all_x      = list(x_known) + list(x_pred)
-    all_labels = list(visible_data["Date"]) + list(real_dates)
-    step_a2 = max(1, len(all_x) // 12)
-    ax_a2.set_xticks(all_x[::step_a2])
-    ax_a2.set_xticklabels(all_labels[::step_a2], rotation=45, ha="right")
-    ax_a2.yaxis.set_major_locator(MaxNLocator(nbins=8))
-    ax_a2.set_title(f"{active_label} — ARIMA Predicted vs Actual")
-    ax_a2.set_xlabel("Time")
-    ax_a2.set_ylabel("Price")
-    ax_a2.legend()
-    ax_a2.grid(True)
-    plt.tight_layout()
-    st.pyplot(fig_a2)
+        arima_price_df = pd.DataFrame({
+            "Day":             future_labels,
+            "Predicted Price": [round(p, 4) for p in arima_prices]
+        })
+        with st.expander("📄 View ARIMA Forecast Table"):
+            st.dataframe(arima_price_df)
 
-    print(f"[DEBUG] ARIMA cross-check chart rendered")
+        fig_a1, ax_a1 = plt.subplots(figsize=(12, 4))
+        x_known    = range(len(visible_data))
+        x_forecast = range(len(visible_data), len(visible_data) + k)
 
-    # Comparison table
-    min_len = min(len(arima_prices), len(real_prices))
-    arima_compare_df = pd.DataFrame({
-        "Date":            real_dates[:min_len],
-        "ARIMA Predicted": [round(p, 4) for p in arima_prices[:min_len]],
-        "Actual Price":    [round(p, 4) for p in real_prices[:min_len]],
-        "Difference":      [round(abs(p - a), 4) for p, a in zip(arima_prices[:min_len], real_prices[:min_len])]
-    })
-    with st.expander("📄 View ARIMA Cross-check Table"):
-        st.dataframe(arima_compare_df)
+        ax_a1.plot(x_known,    visible_data["Close"], label="Known Data (70%)",      color="steelblue", linewidth=1.8)
+        ax_a1.plot(x_forecast, arima_prices,          label="ARIMA Predicted (30%)", color="orange",    linestyle="--", linewidth=2)
 
-    # MAE metric
-    mae = sum(abs(p - a) for p, a in zip(arima_prices[:min_len], real_prices[:min_len])) / min_len
-    print(f"[DEBUG] ARIMA MAE: {mae:.4f}")
-    st.info(f"📉 Mean Absolute Error (MAE): **{mae:.4f}**")
+        all_x      = list(x_known) + list(x_forecast)
+        all_labels = list(visible_data["Date"]) + future_labels
+        step_a1 = max(1, len(all_x) // 12)
+        ax_a1.set_xticks(all_x[::step_a1])
+        ax_a1.set_xticklabels(all_labels[::step_a1], rotation=45, ha="right")
+        ax_a1.yaxis.set_major_locator(MaxNLocator(nbins=8))
+        ax_a1.set_title(f"{active_label} — ARIMA Forecast")
+        ax_a1.set_xlabel("Time")
+        ax_a1.set_ylabel("Price")
+        ax_a1.legend()
+        ax_a1.grid(True)
+        plt.tight_layout()
+        st.pyplot(fig_a1)
+
+        print(f"[DEBUG] ARIMA forecast chart rendered")
+
+        st.markdown("---")
+        if st.button("🔍 ARIMA Cross-check with Real Data"):
+            print(f"[DEBUG] ARIMA cross-check clicked")
+            st.session_state.arima_crosscheck_done = True
+
+    # ARIMA — Cross-check Result (Smooth 3-Line Overlay)
+    if st.session_state.arima_crosscheck_done:
+
+        arima_prices = st.session_state.arima_predicted_output
+        real_prices  = hidden_real_data["Close"].values
+        real_dates   = hidden_real_data["Date"].values
+
+        print(f"[DEBUG] ARIMA CC predicted (first 5): {arima_prices[:5]}")
+        print(f"[DEBUG] ARIMA CC actual    (first 5): {list(real_prices[:5])}")
+
+        st.subheader("📊 ARIMA Cross-check — Predicted vs Actual (30%)")
+
+        fig_a2, ax_a2 = plt.subplots(figsize=(12, 4))
+        x_known = range(len(visible_data))
+        x_pred  = range(len(visible_data), len(visible_data) + k)
+
+        ax_a2.plot(x_known, visible_data["Close"], label="Known (70%)",       color="steelblue", linewidth=1.8)
+        ax_a2.plot(x_pred,  arima_prices,          label="ARIMA Predicted",   color="orange",    linestyle="--", linewidth=2)
+        ax_a2.plot(x_pred,  real_prices,           label="Actual (Real 30%)", color="green",     linewidth=2)
+
+        all_x      = list(x_known) + list(x_pred)
+        all_labels = list(visible_data["Date"]) + list(real_dates)
+        step_a2 = max(1, len(all_x) // 12)
+        ax_a2.set_xticks(all_x[::step_a2])
+        ax_a2.set_xticklabels(all_labels[::step_a2], rotation=45, ha="right")
+        ax_a2.yaxis.set_major_locator(MaxNLocator(nbins=8))
+        ax_a2.set_title(f"{active_label} — ARIMA Predicted vs Actual")
+        ax_a2.set_xlabel("Time")
+        ax_a2.set_ylabel("Price")
+        ax_a2.legend()
+        ax_a2.grid(True)
+        plt.tight_layout()
+        st.pyplot(fig_a2)
+
+        print(f"[DEBUG] ARIMA cross-check chart rendered")
+
+        min_len = min(len(arima_prices), len(real_prices))
+        arima_compare_df = pd.DataFrame({
+            "Date":            real_dates[:min_len],
+            "ARIMA Predicted": [round(p, 4) for p in arima_prices[:min_len]],
+            "Actual Price":    [round(p, 4) for p in real_prices[:min_len]],
+            "Difference":      [round(abs(p - a), 4) for p, a in zip(arima_prices[:min_len], real_prices[:min_len])]
+        })
+        with st.expander("📄 View ARIMA Cross-check Table"):
+            st.dataframe(arima_compare_df)
+
+        mae = sum(abs(p - a) for p, a in zip(arima_prices[:min_len], real_prices[:min_len])) / min_len
+        print(f"[DEBUG] ARIMA MAE: {mae:.4f}")
+        st.info(f"📉 Mean Absolute Error (MAE): **{mae:.4f}**")
