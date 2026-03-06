@@ -410,3 +410,50 @@ Cache TTL set to 3600 seconds (1 hour) for live data.
 ---
 
 # 📝 This file will be updated as we continue to implement new features and improvements. Stay tuned for more updates!
+
+---
+
+Based on everything we've built across this session, here's the current state:
+
+---
+
+## 📈 Stock Trend Analyzer — Project Progress
+
+### ✅ Completed Features
+
+**Core System**
+- Offline CSV stock data (`data/predownloaded_live_cache/`)
+- yfinance live data fetch + local save
+- Live suggestion dropdown with auto-trigger
+- 70/30 train-test split with leakage prevention
+- Session state management (resets on stock/model change)
+
+**Models**
+- Manual Linear Regression — price forecasting
+- Manual Logistic Regression — UP/DOWN trend prediction
+- ARIMA Time-Series — walk-forward forecasting, AIC grid search (p,d,q up to 0–5)
+
+**UI/UX**
+- Card-style model selector (3 cards, highlighted border on select)
+- All dataframes wrapped in expanders
+- Smooth line charts for ARIMA (no markers)
+- Cross-check system for all 3 models
+- MAE score after ARIMA cross-check
+- Accuracy score after Logistic cross-check
+- Axis optimization (MaxNLocator, date label sampling)
+
+---
+
+### 🚀 Roadmap Status
+
+| # | Feature | Status |
+|---|---------|--------|
+| 1 | Yahoo Finance live data integration | ✅ Done |
+| 2 | Model performance comparison dashboard | ⏳ Pending |
+| 3 | ARIMA Time-Series Model | ✅ Done |
+| 4 | Model performance leaderboard | ⏳ Pending |
+| 5 | Ensemble model (bonus, low priority) | ⏳ Pending |
+
+---
+
+Next up is **#2 — Model Performance Comparison Dashboard**. Ready when you are.

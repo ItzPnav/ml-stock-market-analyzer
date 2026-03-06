@@ -603,7 +603,7 @@ if st.session_state.crosscheck_done:
 # ARIMA SECTION — Separate Time-Series Forecast
 # ==================================================
 if model_choice.startswith("ARIMA"):
-    st.markdown("---")
+    # st.markdown("---")
     st.subheader("🔮 ARIMA Time-Series Forecast")
     st.caption("AutoRegressive Integrated Moving Average — trained on the same 70% visible data")
 
